@@ -15,8 +15,9 @@
         <activity
             android:name=".task_detail"
             android:exported="false" />
-        <activity
-            android:name=".add_new_tasks"
+        <activity android:name=".AboutActivity"
+            android:exported="false" />
+        <activity android:name=".AddTaskActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
