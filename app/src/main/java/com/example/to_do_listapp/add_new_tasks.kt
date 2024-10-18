@@ -1,17 +1,20 @@
 package com.example.to_do_listapp
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
+import android.text.Editable
+import android.text.TextWatcher
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Toast
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
 class AddTaskActivity : AppCompatActivity() {
-
     private lateinit var taskEditText: EditText
     private lateinit var saveTaskButton: Button
     private lateinit var cancelTaskButton: Button
+    private lateinit var charLimitTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,30 +23,30 @@ class AddTaskActivity : AppCompatActivity() {
         taskEditText = findViewById(R.id.taskEditText)
         saveTaskButton = findViewById(R.id.saveTaskButton)
         cancelTaskButton = findViewById(R.id.cancelTaskButton)
+        charLimitTextView = findViewById(R.id.charLimitTextView)
 
-        // Set OnClickListener for Save button
-        saveTaskButton.setOnClickListener {
-            val taskText = taskEditText.text.toString().trim()
-
-            // Validate input must be at least 3 characters
-            if (TextUtils.isEmpty(taskText) || taskText.length < 3) {
-                Toast.makeText(this, "Please enter at least 3 characters.", Toast.LENGTH_SHORT).show()
-            } else {
-                // Task is valid then it is saved the task
-                saveTask(taskText)
+        taskEditText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                val charCount = s?.length ?: 0
+                charLimitTextView.text = "$charCount/25 characters"
+                saveTaskButton.isEnabled = charCount in 3..25
             }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+        saveTaskButton.setOnClickListener {
+            val taskText = taskEditText.text.toString()
+            val resultIntent = Intent()
+            resultIntent.putExtra("task", taskText)
+            setResult(Activity.RESULT_OK, resultIntent)
+            finish()
         }
 
-        // Set OnClickListener for Cancel button
         cancelTaskButton.setOnClickListener {
-            finish() // Close the activity and go back to the main screen
+            setResult(Activity.RESULT_CANCELED)
+            finish()
         }
-    }
-
-    // Method to save the task (for demonstration purposes)
-    private fun saveTask(taskText: String) {
-        // Here you can add the logic to save the task to your data source (  database or a shared preference)
-        Toast.makeText(this, "Task '$taskText' saved successfully!", Toast.LENGTH_SHORT).show()
-        finish() // Close the activity after saving the task
     }
 }
