@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity() {
    private lateinit var recyclerView: RecyclerView
    private lateinit var tooMuchWorkText: TextView
 
-   private val tasks = mutableListOf<String>()
+   private val tasks = mutableListOf<String>() // Task list
    private lateinit var taskAdapter: TaskAdapter
 
    override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
       addButton = findViewById(R.id.Addbutton)
       aboutButton = findViewById(R.id.Aboutbutton)
       recyclerView = findViewById(R.id.recyclerView)
-    //  tooMuchWorkText = findViewById(R.id.textViewTooMuchWork) // If needed
+      tooMuchWorkText = findViewById(R.id.textViewTooMuchWork) // Ensure this TextView is in your layout
 
       // RecyclerView setup
       taskAdapter = TaskAdapter(tasks)
@@ -47,10 +47,11 @@ class MainActivity : AppCompatActivity() {
          startActivity(intent)
       }
 
-      // Check if "Too much work!" message should be shown
+      // Initially check if "Too much work!" message should be shown
       updateAddButtonVisibility()
    }
 
+   // Method to toggle the visibility of Add Button and "Too much work!" message
    private fun updateAddButtonVisibility() {
       if (tasks.size >= 7) {
          addButton.visibility = View.GONE
@@ -61,6 +62,7 @@ class MainActivity : AppCompatActivity() {
       }
    }
 
+   // This method handles results from AddTaskActivity and adds the new task
    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
       super.onActivityResult(requestCode, resultCode, data)
       if (requestCode == 1 && resultCode == RESULT_OK) {
@@ -68,7 +70,7 @@ class MainActivity : AppCompatActivity() {
          if (newTask != null) {
             tasks.add(newTask)
             taskAdapter.notifyDataSetChanged()
-            updateAddButtonVisibility()
+            updateAddButtonVisibility() // Update visibility when a new task is added
          }
       }
    }

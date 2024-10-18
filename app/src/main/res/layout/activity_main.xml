@@ -38,6 +38,19 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
+    <TextView
+        android:id="@+id/textViewTooMuchWork"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Too much work!"
+        android:visibility="gone"
+        android:layout_gravity="center_horizontal"
+        android:textSize="18sp"
+        android:textColor="@android:color/holo_red_dark"
+        android:padding="16dp" />
+
+
+
 
 
     <Button
