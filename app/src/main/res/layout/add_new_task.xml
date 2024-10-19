@@ -24,8 +24,8 @@
     <!-- Save Button -->
     <EditText
         android:id="@+id/taskEditText"
-        android:layout_width="411dp"
-        android:layout_height="65dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="44dp"
         android:focusable="true"
         android:focusableInTouchMode="true"
@@ -38,29 +38,34 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
+    <!-- Cancel Button -->
+    <!-- Character limit text -->
+
     <Button
         android:id="@+id/saveTaskButton"
         android:layout_width="309dp"
         android:layout_height="65dp"
-        android:layout_marginTop="160dp"
+        android:layout_marginTop="44dp"
         android:padding="8dp"
         android:text="Save"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/taskEditText" />
 
-    <!-- Cancel Button -->
     <Button
         android:id="@+id/cancelTaskButton"
-        android:layout_width="309dp"
-        android:layout_height="65dp"
-        android:layout_marginTop="72dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:padding="8dp"
         android:text="Cancel"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/saveTaskButton" />
-    <!-- Character limit text -->
+        app:layout_constraintTop_toBottomOf="@id/saveTaskButton"
+        app:layout_constraintVertical_bias="0.0" />
+
     <TextView
         android:id="@+id/charLimitTextView"
         android:layout_width="wrap_content"
