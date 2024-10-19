@@ -20,21 +20,24 @@
         app:layout_constraintVertical_bias="0.083" />
 
     <!-- Task Input Field -->
+
+    <!-- Save Button -->
     <EditText
         android:id="@+id/taskEditText"
         android:layout_width="411dp"
         android:layout_height="65dp"
-        android:layout_marginTop="68dp"
+        android:layout_marginTop="44dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:hint="Enter Task"
-        android:inputType="phone"
+        android:inputType="text"
         android:maxLength="25"
         android:padding="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
-    <!-- Save Button -->
     <Button
         android:id="@+id/saveTaskButton"
         android:layout_width="309dp"
