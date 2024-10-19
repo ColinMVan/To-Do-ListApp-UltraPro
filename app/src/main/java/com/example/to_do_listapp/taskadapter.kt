@@ -29,7 +29,7 @@ class TaskAdapter(private val tasks: List<String>) : RecyclerView.Adapter<TaskAd
     }
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
-        holder.taskText.text = tasks[position]
+        holder.taskText.text = "${position + 1}. ${tasks[position]}"
     }
 
     override fun getItemCount() = tasks.size
