@@ -72,6 +72,14 @@ class MainActivity : AppCompatActivity() {
             taskAdapter.notifyDataSetChanged()
             updateAddButtonVisibility() // Update visibility when a new task is added
          }
+      } else if (requestCode == 2 && resultCode == RESULT_OK) {
+         // Handle task completion
+         val taskIndex = data?.getIntExtra("taskIndex", -1)
+         if (taskIndex != null && taskIndex != -1) {
+            tasks.removeAt(taskIndex) // Remove the completed task from the list
+            taskAdapter.notifyDataSetChanged() // Notify the adapter to update the RecyclerView
+            updateAddButtonVisibility() // Update the add button visibility
+         }
       }
    }
 }
