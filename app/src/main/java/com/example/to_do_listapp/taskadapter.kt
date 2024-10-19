@@ -14,10 +14,14 @@ class TaskAdapter(private val tasks: List<String>) : RecyclerView.Adapter<TaskAd
 
         init {
             view.setOnClickListener {
+                // Creating the intent to open task_detail activity
                 val intent = Intent(view.context, task_detail::class.java)
+                // the selected task and its index to task detail_detail
                 intent.putExtra("task", tasks[adapterPosition])
                 intent.putExtra("taskIndex", adapterPosition)
+                //task_detail uses this to start
                 view.context.startActivity(intent)
+
             }
         }
     }
@@ -32,5 +36,9 @@ class TaskAdapter(private val tasks: List<String>) : RecyclerView.Adapter<TaskAd
         holder.taskText.text = "${position + 1}. ${tasks[position]}"
     }
 
-    override fun getItemCount() = tasks.size
+    override fun getItemCount(): Int {
+        return tasks.size
+    }
+
 }
+

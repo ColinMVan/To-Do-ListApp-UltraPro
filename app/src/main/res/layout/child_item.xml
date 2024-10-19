@@ -8,24 +8,13 @@
     app:cardCornerRadius="50dp">
 
     <TextView
-        android:id="@+id/tv_task0"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="20dp"
-        android:text="1.)"
-        android:textAlignment="center"/>
-
-    <TextView
         android:id="@+id/tv_task1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="100dp"
+        android:layout_width="182dp"
+        android:layout_height="35dp"
+        android:layout_marginLeft="10dp"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
-        android:text="This is task "
-        android:textAlignment="center" />
+        android:textAlignment="viewStart" />
 
 
 </androidx.cardview.widget.CardView>

@@ -83,9 +83,9 @@
       android:id="@+id/textView3"
       android:layout_width="228dp"
       android:layout_height="133dp"
-      android:layout_marginTop="8dp"
-      android:layout_marginEnd="32dp"
-      android:text="TextView"
+      android:layout_marginTop="4dp"
+      android:layout_marginEnd="20dp"
+      android:text="is a Computer Science major I'm a current Juinor studying at Indiana Univesity. I look foward in 2026 to become an mobile app developer for any company and make the lives and each every user much simpler."
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
