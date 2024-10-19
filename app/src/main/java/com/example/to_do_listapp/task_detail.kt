@@ -1,5 +1,7 @@
 package com.example.to_do_listapp
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
@@ -35,6 +37,9 @@ class task_detail : AppCompatActivity() {
 
         // Complete task logic
         markCompleteButton.setOnClickListener {
+            val returnIntent = Intent()
+            returnIntent.putExtra("taskIndex", taskIndex)
+            setResult(Activity.RESULT_OK, returnIntent)
             finish() // Close activity
         }
 
