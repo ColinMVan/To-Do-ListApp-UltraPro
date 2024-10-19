@@ -38,10 +38,12 @@ class AddTaskActivity : AppCompatActivity() {
 
         saveTaskButton.setOnClickListener {
             val taskText = taskEditText.text.toString()
-            val resultIntent = Intent()
-            resultIntent.putExtra("task", taskText)
-            setResult(Activity.RESULT_OK, resultIntent)
-            finish()
+            if (!taskText.isEmpty()) {
+                val resultIntent = Intent()
+                resultIntent.putExtra("task", taskText)
+                setResult(Activity.RESULT_OK, resultIntent)
+                finish()
+            }
         }
 
         cancelTaskButton.setOnClickListener {

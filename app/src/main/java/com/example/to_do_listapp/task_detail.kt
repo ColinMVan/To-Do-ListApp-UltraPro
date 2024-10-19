@@ -1,5 +1,6 @@
 package com.example.to_do_listapp
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -15,8 +16,7 @@ class task_detail : AppCompatActivity() {
     private lateinit var cancelButton: Button
     private lateinit var previousTaskButton: Button
     private lateinit var nextTaskButton: Button
-    private var taskIndex: Int = -1
-    private lateinit var tasks: List<String> // Declare the tasks list here
+    private lateinit var tasks: List<String> // List to store tasks
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,50 +28,43 @@ class task_detail : AppCompatActivity() {
         previousTaskButton = findViewById(R.id.previousTaskButton)
         nextTaskButton = findViewById(R.id.nextTaskButton)
 
-        // Retrieve the task and task index from the intent
-        val task = intent.getStringExtra("task")
-        taskIndex = intent.getIntExtra("taskIndex", -1)
-        tasks = intent.getStringArrayListExtra("taskList") ?: emptyList() // Retrieve the tasks list
+        // Simulating a list of tasks for navigation
+        tasks = listOf("Task 1", "Task 2", "Task 3", "Task 4")
 
-        // Display the current task in the TextView
-        taskTextView.text = task ?: "No task found"
-
-        // Mark task as complete logic
-        markCompleteButton.setOnClickListener {
-            if (taskIndex != -1) {
-                val resultIntent = Intent()
-                resultIntent.putExtra("taskIndex", taskIndex)
-                setResult(RESULT_OK, resultIntent)
-                finish() // Close activity
-            }
-        }
-
-        // Previous Task Button
-        previousTaskButton.setOnClickListener {
-            if (taskIndex > 0) {
-                // Decrease task index and update task
-                taskIndex--
-                updateTaskDisplay()
-            }
-        }
-
-        // Next Task Button
-        nextTaskButton.setOnClickListener {
-            if (taskIndex < tasks.size - 1) {
-                // Increase task index and update task
-                taskIndex++
-                updateTaskDisplay()
-            }
-        }
-
-        // Cancel button closes the activity without any action
-        cancelButton.setOnClickListener {
-            finish()
-        }
-    }
-
-    private fun updateTaskDisplay() {
-        // Update the task text view with the new task
+        // Get task and task index from the intent
+        val taskIndex = intent.getIntExtra("taskIndex", 0)
         taskTextView.text = tasks[taskIndex]
+
+        // Complete task logic
+        markCompleteButton.setOnClickListener {
+            val returnIntent = Intent()
+            returnIntent.putExtra("taskIndex", taskIndex)
+            setResult(Activity.RESULT_OK, returnIntent)
+            finish() // Close activity
+        }
+
+        cancelButton.setOnClickListener {
+            finish() // Close activity without changes
+        }
+
+        // Previous Task button logic
+        previousTaskButton.setOnClickListener {
+            val currentTaskIndex = intent.getIntExtra("taskIndex", 0)
+            if (currentTaskIndex > 0) {
+                val previousTask = tasks[currentTaskIndex - 1]
+                taskTextView.text = previousTask
+                intent.putExtra("taskIndex", currentTaskIndex - 1)
+            }
+        }
+
+        // Next Task button logic
+        nextTaskButton.setOnClickListener {
+            val currentTaskIndex = intent.getIntExtra("taskIndex", 0)
+            if (currentTaskIndex < tasks.size - 1) {
+                val nextTask = tasks[currentTaskIndex + 1]
+                taskTextView.text = nextTask
+                intent.putExtra("taskIndex", currentTaskIndex + 1)
+            }
+        }
     }
 }
