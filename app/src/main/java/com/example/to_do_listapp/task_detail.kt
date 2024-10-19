@@ -35,7 +35,6 @@ class task_detail : AppCompatActivity() {
 
         // Complete task logic
         markCompleteButton.setOnClickListener {
-            // Logic to mark task as complete
             finish() // Close activity
         }
 
