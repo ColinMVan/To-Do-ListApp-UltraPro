@@ -3,6 +3,7 @@ package com.example.to_do_listapp
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -29,7 +30,10 @@ class task_detail : AppCompatActivity() {
         nextTaskButton = findViewById(R.id.nextTaskButton)
 
         // Simulating a list of tasks for navigation
-        tasks = listOf("Task 1", "Task 2", "Task 3", "Task 4")
+//        tasks = listOf("Task 1", "Task 2", "Task 3", "Task 4")
+        tasks = intent.getStringArrayListExtra("taskList") ?: listOf("Task 1", "Task 2", "Task 3", "Task 4")
+        Log.d("TargetActivity", "Received task list: ${tasks}")
+        var indexToRemove = 1
 
         // Get task and task index from the intent
         val taskIndex = intent.getIntExtra("taskIndex", 0)
@@ -38,7 +42,8 @@ class task_detail : AppCompatActivity() {
         // Complete task logic
         markCompleteButton.setOnClickListener {
             val returnIntent = Intent()
-            returnIntent.putExtra("taskIndex", taskIndex)
+            returnIntent.putExtra("indexToRemove", indexToRemove.toString())
+            Log.d("Task Details Activity", "Remove button clicked for index ${indexToRemove}")
             setResult(Activity.RESULT_OK, returnIntent)
             finish() // Close activity
         }
@@ -55,6 +60,7 @@ class task_detail : AppCompatActivity() {
                 taskTextView.text = previousTask
                 intent.putExtra("taskIndex", currentTaskIndex - 1)
             }
+            indexToRemove -= 1
         }
 
         // Next Task button logic
@@ -65,6 +71,7 @@ class task_detail : AppCompatActivity() {
                 taskTextView.text = nextTask
                 intent.putExtra("taskIndex", currentTaskIndex + 1)
             }
+            indexToRemove += 1
         }
     }
 }
