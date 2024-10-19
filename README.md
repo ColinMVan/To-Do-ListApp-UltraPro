@@ -1,0 +1,1 @@
+This is a To-Do List app that allows the user to add and complete custom tasks. The user can add up to 7 tasks at a time, and can also view the creators of the project through the About page. Below is a screenshot of the app.
