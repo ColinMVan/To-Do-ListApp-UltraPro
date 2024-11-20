@@ -13,7 +13,7 @@ import kotlin.math.log
 
 class MainActivity : AppCompatActivity() {
    private lateinit var addButton: Button
-   private lateinit var aboutButton: Button
+//   private lateinit var aboutButton: Button
    private lateinit var recyclerView: RecyclerView
    private lateinit var tooMuchWorkText: TextView
 
@@ -26,7 +26,6 @@ class MainActivity : AppCompatActivity() {
 
       // Initialize views
       addButton = findViewById(R.id.Addbutton)
-      aboutButton = findViewById(R.id.Aboutbutton)
       recyclerView = findViewById(R.id.recyclerView)
       tooMuchWorkText = findViewById(R.id.textViewTooMuchWork) // Ensure this TextView is in your layout
 
@@ -52,25 +51,25 @@ class MainActivity : AppCompatActivity() {
       }
 
       // About Button
-      aboutButton.setOnClickListener {
-         val intent = Intent(this, AboutActivity::class.java)
-         startActivity(intent)
-      }
+//      aboutButton.setOnClickListener {
+//         val intent = Intent(this, AboutActivity::class.java)
+//         startActivity(intent)
+//      }
 
       // Initially check if "Too much work!" message should be shown
-      updateAddButtonVisibility()
+//      updateAddButtonVisibility()
    }
 
    // Method to toggle the visibility of Add Button and "Too much work!" message
-   private fun updateAddButtonVisibility() {
-      if (tasks.size >= 7) {
-         addButton.visibility = View.GONE
-         tooMuchWorkText.visibility = View.VISIBLE
-      } else {
-         addButton.visibility = View.VISIBLE
-         tooMuchWorkText.visibility = View.GONE
-      }
-   }
+//   private fun updateAddButtonVisibility() {
+//      if (tasks.size >= 7) {
+//         addButton.visibility = View.GONE
+//         tooMuchWorkText.visibility = View.VISIBLE
+//      } else {
+//         addButton.visibility = View.VISIBLE
+//         tooMuchWorkText.visibility = View.GONE
+//      }
+//   }
 
    // This method handles results from AddTaskActivity and adds the new task
    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -81,7 +80,7 @@ class MainActivity : AppCompatActivity() {
          if (newTask != null) {
             tasks.add(newTask)
             taskAdapter.notifyDataSetChanged()
-            updateAddButtonVisibility() // Update visibility when a new task is added
+//            updateAddButtonVisibility() // Update visibility when a new task is added
          }
          if (indexToRemove != null && indexToRemove.toInt() >= 0) {
             Log.d("Activity Results", "Index to remove ${indexToRemove}")
