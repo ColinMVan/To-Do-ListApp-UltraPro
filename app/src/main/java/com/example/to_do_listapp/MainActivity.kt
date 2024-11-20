@@ -9,11 +9,24 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
+import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
+import com.google.firebase.auth.FirebaseAuth
 import kotlin.math.log
 
 class MainActivity : AppCompatActivity() {
+   private val signInLauncher = registerForActivityResult(
+      FirebaseAuthUIActivityResultContract(),
+   ) { res ->
+      this.onSignInResult(res)
+   }
+
+   lateinit var userName: TextView
+
    private lateinit var addButton: Button
-//   private lateinit var aboutButton: Button
+
+   //   private lateinit var aboutButton: Button
    private lateinit var recyclerView: RecyclerView
    private lateinit var tooMuchWorkText: TextView
 
@@ -24,10 +37,25 @@ class MainActivity : AppCompatActivity() {
       super.onCreate(savedInstanceState)
       setContentView(R.layout.activity_main)
 
+      val providers = arrayListOf(
+         AuthUI.IdpConfig.EmailBuilder().build(),
+//         AuthUI.IdpConfig.PhoneBuilder().build(),
+         AuthUI.IdpConfig.GoogleBuilder().build(),
+//         AuthUI.IdpConfig.FacebookBuilder().build(),
+//         AuthUI.IdpConfig.TwitterBuilder().build(),
+      )
+
+      val signInIntent = AuthUI.getInstance()
+         .createSignInIntentBuilder()
+         .setAvailableProviders(providers)
+         .build()
+      signInLauncher.launch(signInIntent)
+
       // Initialize views
       addButton = findViewById(R.id.Addbutton)
       recyclerView = findViewById(R.id.recyclerView)
-      tooMuchWorkText = findViewById(R.id.textViewTooMuchWork) // Ensure this TextView is in your layout
+      tooMuchWorkText =
+         findViewById(R.id.textViewTooMuchWork) // Ensure this TextView is in your layout
 
       // RecyclerView setup
       taskAdapter = TaskAdapter(tasks)
@@ -50,6 +78,8 @@ class MainActivity : AppCompatActivity() {
          startActivityForResult(intent, 2)
       }
 
+      userName = findViewById(R.id.userName)
+
       // About Button
 //      aboutButton.setOnClickListener {
 //         val intent = Intent(this, AboutActivity::class.java)
@@ -70,6 +100,22 @@ class MainActivity : AppCompatActivity() {
 //         tooMuchWorkText.visibility = View.GONE
 //      }
 //   }
+
+   private fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
+      val response = result.idpResponse
+      if (result.resultCode == RESULT_OK) {
+// Successfully signed in
+         val user = FirebaseAuth.getInstance().currentUser
+         user?.let {
+            userName.text = user.displayName
+         }
+
+// ...
+      } else {
+// Sign in failed
+         Log.i("MYTAG", "Failed sign in")
+      }
+   }
 
    // This method handles results from AddTaskActivity and adds the new task
    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
