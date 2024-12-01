@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -31,9 +32,12 @@ class MainActivity : AppCompatActivity() {
    private lateinit var addButton: Button
    private lateinit var signOutButton: Button
    private lateinit var recyclerView: RecyclerView
+   private lateinit var searchButton: Button
+   private lateinit var searchBox: EditText
    private lateinit var taskAdapter: TaskAdapter
 
    private val tasks: MutableList<String> = mutableListOf() // Task list
+   private val allTasks: MutableList<String> = mutableListOf()
    private lateinit var firestore: FirebaseFirestore
    private var userId: String? = null // Current user's unique ID
 
@@ -49,6 +53,8 @@ class MainActivity : AppCompatActivity() {
       addButton = findViewById(R.id.Addbutton)
       signOutButton = findViewById(R.id.signOutButton)
       recyclerView = findViewById(R.id.recyclerView)
+      searchButton = findViewById(R.id.searchButton)
+      searchBox = findViewById(R.id.searchBox)
 
       // RecyclerView setup
       taskAdapter = TaskAdapter(tasks)
@@ -62,6 +68,11 @@ class MainActivity : AppCompatActivity() {
             intent.putStringArrayListExtra("taskList", ArrayList(tasks))
             startActivityForResult(intent, 1)
          }
+      }
+
+      searchButton.setOnClickListener {
+         val query = searchBox.text.toString().trim()
+         filterTasks(query)
       }
 
       // Sign Out Button
@@ -78,6 +89,42 @@ class MainActivity : AppCompatActivity() {
          updateUI(currentUser)
          fetchUserTasks() // Fetch user's tasks on login
       }
+   }
+
+   private fun filterTasks(query: String) {
+      tasks.clear()
+      if (query.isEmpty()) {
+         tasks.addAll(allTasks)
+      } else {
+         tasks.addAll(allTasks.filter { it == query })
+      }
+      taskAdapter.notifyDataSetChanged()
+      if (tasks.isEmpty()) {
+         Toast.makeText(this, "No tasks match \"$query\"", Toast.LENGTH_SHORT).show()
+      }
+   }
+
+   private fun fetchUserTasks() {
+      if (userId == null) return
+
+      firestore.collection("users")
+         .document(userId!!)
+         .collection("tasks")
+         .get()
+         .addOnSuccessListener { querySnapshot ->
+            allTasks.clear()
+            tasks.clear()
+            for (doc in querySnapshot) {
+               val task = doc.toObject<Task>()
+               allTasks.add(task.taskName)
+            }
+            tasks.addAll(allTasks)
+            taskAdapter.notifyDataSetChanged()
+         }
+         .addOnFailureListener {
+            Log.e("Firestore", "Failed to fetch tasks", it)
+            Toast.makeText(this, "Failed to fetch tasks", Toast.LENGTH_SHORT).show()
+         }
    }
 
    private fun initiateSignIn() {
@@ -126,26 +173,26 @@ class MainActivity : AppCompatActivity() {
          }
    }
 
-   private fun fetchUserTasks() {
-      if (userId == null) return
-
-      firestore.collection("users")
-         .document(userId!!)
-         .collection("tasks")
-         .get()
-         .addOnSuccessListener { querySnapshot ->
-            tasks.clear()
-            for (doc in querySnapshot) {
-               val task = doc.toObject<Task>()
-               tasks.add(task.taskName)
-            }
-            taskAdapter.notifyDataSetChanged()
-         }
-         .addOnFailureListener {
-            Log.e("Firestore", "Failed to fetch tasks", it)
-            Toast.makeText(this, "Failed to fetch tasks", Toast.LENGTH_SHORT).show()
-         }
-   }
+//   private fun fetchUserTasks() {
+//      if (userId == null) return
+//
+//      firestore.collection("users")
+//         .document(userId!!)
+//         .collection("tasks")
+//         .get()
+//         .addOnSuccessListener { querySnapshot ->
+//            tasks.clear()
+//            for (doc in querySnapshot) {
+//               val task = doc.toObject<Task>()
+//               tasks.add(task.taskName)
+//            }
+//            taskAdapter.notifyDataSetChanged()
+//         }
+//         .addOnFailureListener {
+//            Log.e("Firestore", "Failed to fetch tasks", it)
+//            Toast.makeText(this, "Failed to fetch tasks", Toast.LENGTH_SHORT).show()
+//         }
+//   }
 
    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
       super.onActivityResult(requestCode, resultCode, data)

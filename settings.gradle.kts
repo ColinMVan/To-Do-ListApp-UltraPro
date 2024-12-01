@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "To-Do-ListApp"
+rootProject.name = "To-Do-ListApp-UltraPro"
 include(":app")
  
