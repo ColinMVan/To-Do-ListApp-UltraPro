@@ -3,6 +3,7 @@ package com.example.to_do_listapp
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -27,7 +28,7 @@ class MainActivity : AppCompatActivity() {
    ) { res ->
       this.onSignInResult(res)
    }
-
+   //User interface elements
    private lateinit var userName: TextView
    private lateinit var addButton: Button
    private lateinit var signOutButton: Button
@@ -35,6 +36,7 @@ class MainActivity : AppCompatActivity() {
    private lateinit var searchButton: Button
    private lateinit var searchBox: EditText
    private lateinit var taskAdapter: TaskAdapter
+   private lateinit var signInButton: Button
 
    private val tasks: MutableList<String> = mutableListOf() // Task list
    private val allTasks: MutableList<String> = mutableListOf()
@@ -48,13 +50,14 @@ class MainActivity : AppCompatActivity() {
       // Initialize Firebase Firestore
       firestore = FirebaseFirestore.getInstance()
 
-      // Initialize views
+      // Initialize user views
       userName = findViewById(R.id.userName)
       addButton = findViewById(R.id.Addbutton)
       signOutButton = findViewById(R.id.signOutButton)
       recyclerView = findViewById(R.id.recyclerView)
       searchButton = findViewById(R.id.searchButton)
       searchBox = findViewById(R.id.searchBox)
+      signInButton = findViewById(R.id.signInButton)
 
       // RecyclerView setup
       taskAdapter = TaskAdapter(tasks)
@@ -73,6 +76,10 @@ class MainActivity : AppCompatActivity() {
       searchButton.setOnClickListener {
          val query = searchBox.text.toString().trim()
          filterTasks(query)
+      }
+      // Sign In Button
+      signInButton.setOnClickListener {
+         initiateSignIn()
       }
 
       // Sign Out Button
@@ -141,6 +148,8 @@ class MainActivity : AppCompatActivity() {
 
    private fun updateUI(user: FirebaseUser) {
       userName.text = "Welcome, ${user.displayName ?: "User"}"
+      signInButton.visibility = View.GONE
+      signOutButton.visibility = View.VISIBLE
       Toast.makeText(this, "Signed in as ${user.email}", Toast.LENGTH_SHORT).show()
    }
 
@@ -228,23 +237,35 @@ class MainActivity : AppCompatActivity() {
             Log.e("Firestore", "Failed to add task", it)
          }
    }
-
+   // Signs the  user out if the app goes into the background
    override fun onStop() {
       super.onStop()
-      signOutUser()
+      val currentUser = FirebaseAuth.getInstance().currentUser
+      if (currentUser != null) {
+         Log.d("Auth", "App went into the background, user is still logged in.")
+      } else{
+         signOutUser()
+      }
    }
 
+   // Signs the User out the app is paused
    override fun onPause() {
       super.onPause()
       signOutUser()
-   }
 
+   }
+   // The signInButton appears on application opening
    override fun onStart() {
       super.onStart()
+      val signInButton: Button = findViewById(R.id.signInButton)
       val currentUser = FirebaseAuth.getInstance().currentUser
+
       if (currentUser == null) {
-         initiateSignIn()
+         // If the person isn't signed in the sign in Button shall be shown
+         signInButton.visibility = View.VISIBLE
       } else {
+         // If the user is signed in the Button won't be shown
+         signInButton.visibility = View.GONE
          userId = currentUser.uid
          updateUI(currentUser)
          fetchUserTasks()
