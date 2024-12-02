@@ -104,28 +104,6 @@ class MainActivity : AppCompatActivity() {
       }
    }
 
-   private fun fetchUserTasks() {
-      if (userId == null) return
-
-      firestore.collection("users")
-         .document(userId!!)
-         .collection("tasks")
-         .get()
-         .addOnSuccessListener { querySnapshot ->
-            allTasks.clear()
-            tasks.clear()
-            for (doc in querySnapshot) {
-               val task = doc.toObject<Task>()
-               allTasks.add(task.taskName)
-            }
-            tasks.addAll(allTasks)
-            taskAdapter.notifyDataSetChanged()
-         }
-         .addOnFailureListener {
-            Log.e("Firestore", "Failed to fetch tasks", it)
-            Toast.makeText(this, "Failed to fetch tasks", Toast.LENGTH_SHORT).show()
-         }
-   }
 
    private fun initiateSignIn() {
       val providers = arrayListOf(
@@ -146,10 +124,14 @@ class MainActivity : AppCompatActivity() {
       if (result.resultCode == RESULT_OK) {
          // Successfully signed in
          val user = FirebaseAuth.getInstance().currentUser
-         user?.let {
-            userId = it.uid
-            updateUI(it)
+         if (user != null) {
+            Log.d("Auth", "Sign-in successful: ${user.uid}")
+            userId = user.uid
+            updateUI(user)
             fetchUserTasks()
+         } else {
+            Log.i("Auth", "Sign-in failed: User object is null")
+            initiateSignIn()
          }
       } else {
          Log.i("Auth", "Sign-in failed: ${response?.error?.message}")
@@ -169,7 +151,8 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Signed out successfully", Toast.LENGTH_SHORT).show()
             tasks.clear() // Clear local tasks
             taskAdapter.notifyDataSetChanged()
-            initiateSignIn() // Redirect back to sign-in screen
+            userId = null
+            userName.text = ""
          }
    }
 
@@ -193,6 +176,28 @@ class MainActivity : AppCompatActivity() {
 //            Toast.makeText(this, "Failed to fetch tasks", Toast.LENGTH_SHORT).show()
 //         }
 //   }
+   private fun fetchUserTasks() {
+      if (userId == null) return
+
+      firestore.collection("users")
+         .document(userId!!)
+         .collection("tasks")
+         .get()
+         .addOnSuccessListener { querySnapshot ->
+            allTasks.clear()
+            tasks.clear()
+            for (doc in querySnapshot) {
+               val task = doc.toObject<Task>()
+               allTasks.add(task.taskName)
+            }
+            tasks.addAll(allTasks)
+            taskAdapter.notifyDataSetChanged()
+         }
+         .addOnFailureListener {
+            Log.e("Firestore", "Failed to fetch tasks", it)
+            Toast.makeText(this, "Failed to fetch tasks", Toast.LENGTH_SHORT).show()
+         }
+   }
 
    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
       super.onActivityResult(requestCode, resultCode, data)
@@ -221,6 +226,39 @@ class MainActivity : AppCompatActivity() {
          }
          .addOnFailureListener {
             Log.e("Firestore", "Failed to add task", it)
+         }
+   }
+
+   override fun onStop() {
+      super.onStop()
+      signOutUser()
+   }
+
+   override fun onPause() {
+      super.onPause()
+      signOutUser()
+   }
+
+   override fun onStart() {
+      super.onStart()
+      val currentUser = FirebaseAuth.getInstance().currentUser
+      if (currentUser == null) {
+         initiateSignIn()
+      } else {
+         userId = currentUser.uid
+         updateUI(currentUser)
+         fetchUserTasks()
+      }
+   }
+
+   private fun signOutUserOnInvisibility() {
+      AuthUI.getInstance()
+         .signOut(this)
+         .addOnCompleteListener {
+            Log.d("Auth", "User signed out as app became invisible.")
+            tasks.clear() // Clear local tasks
+            taskAdapter.notifyDataSetChanged()
+            initiateSignIn() // Redirect to sign-in screen
          }
    }
 }

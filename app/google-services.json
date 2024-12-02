@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "27710318373",
-    "project_id": "to-do-list-pro-89a88",
-    "storage_bucket": "to-do-list-pro-89a88.firebasestorage.app"
+    "project_number": "211119366033",
+    "project_id": "to-do-listapp-ultrapro",
+    "storage_bucket": "to-do-listapp-ultrapro.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:27710318373:android:4aac946f57f9675e23dccc",
+        "mobilesdk_app_id": "1:211119366033:android:c91c2df43071a811d98430",
         "android_client_info": {
           "package_name": "com.example.to_do_listapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "27710318373-phuc1n6s29kn7oebjfs3a8dst1eikbsr.apps.googleusercontent.com",
+          "client_id": "211119366033-r40evt4ranseihjnnlcd5h90jmu0f1gr.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDt4h8HLZJYtA9jvQ0orqZ5mcMhlfS69yk"
+          "current_key": "AIzaSyBYK1m7oaSb6whJoSkyiiEzdOI-H7-pMzI"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "27710318373-phuc1n6s29kn7oebjfs3a8dst1eikbsr.apps.googleusercontent.com",
+              "client_id": "211119366033-r40evt4ranseihjnnlcd5h90jmu0f1gr.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
