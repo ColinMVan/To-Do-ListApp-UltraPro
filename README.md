@@ -4,4 +4,5 @@ This is a To-Do List app that allows the user to add and complete custom tasks. 
 
 
 
-<img width="371" alt="appScreenshot" src="https://github.com/user-attachments/assets/e1a22084-b1d4-43ec-862f-f1caf02acd6f">
+<img width="308" alt="Screenshot 2024-12-01 at 7 42 25 PM" src="https://github.com/user-attachments/assets/49e3c5b7-8a24-4270-87bf-6c88d1214f5d">
+
