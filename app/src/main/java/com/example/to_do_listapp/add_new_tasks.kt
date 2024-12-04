@@ -29,13 +29,14 @@ class AddTaskActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {
                 val charCount = s?.length ?: 0
                 charLimitTextView.text = "$charCount/25 characters"
+                //Character min and max
                 saveTaskButton.isEnabled = charCount in 3..25
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
-
+        // Saving the task button
         saveTaskButton.setOnClickListener {
             val taskText = taskEditText.text.toString()
             if (!taskText.isEmpty()) {
@@ -45,7 +46,7 @@ class AddTaskActivity : AppCompatActivity() {
                 finish()
             }
         }
-
+        // Canceling the task button
         cancelTaskButton.setOnClickListener {
             setResult(Activity.RESULT_CANCELED)
             finish()

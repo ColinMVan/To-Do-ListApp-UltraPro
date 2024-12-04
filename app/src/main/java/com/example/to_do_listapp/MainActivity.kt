@@ -37,6 +37,10 @@ class MainActivity : AppCompatActivity() {
    private lateinit var searchBox: EditText
    private lateinit var taskAdapter: TaskAdapter
    private lateinit var signInButton: Button
+   private lateinit var loginInButton: Button
+   private lateinit var emailField: EditText
+   private lateinit var passwordField: EditText
+
 
    private val tasks: MutableList<String> = mutableListOf() // Task list
    private val allTasks: MutableList<String> = mutableListOf()
@@ -57,7 +61,11 @@ class MainActivity : AppCompatActivity() {
       recyclerView = findViewById(R.id.recyclerView)
       searchButton = findViewById(R.id.searchButton)
       searchBox = findViewById(R.id.searchBox)
-      signInButton = findViewById(R.id.signInButton)
+      signInButton = findViewById(R.id.signInButton1)
+      loginInButton = findViewById(R.id.loginButton)
+      emailField = findViewById(R.id.emailField)
+      passwordField = findViewById(R.id.passwordField)
+
 
       // RecyclerView setup
       taskAdapter = TaskAdapter(tasks)
@@ -66,10 +74,14 @@ class MainActivity : AppCompatActivity() {
 
       // Add Button
       addButton.setOnClickListener {
-         if (tasks.size < 7) {
-            val intent = Intent(this, AddTaskActivity::class.java)
-            intent.putStringArrayListExtra("taskList", ArrayList(tasks))
-            startActivityForResult(intent, 1)
+         val newTask = searchBox.text.toString().trim()
+         if (newTask.isNotEmpty() && tasks.size < 7) {
+            tasks.add(newTask)
+            allTasks.add(newTask)
+            taskAdapter.notifyDataSetChanged()
+            saveTaskToFirestore(newTask)
+         } else {
+            Toast.makeText(this, "Task limit reached or invalid input", Toast.LENGTH_SHORT).show()
          }
       }
 
@@ -86,6 +98,35 @@ class MainActivity : AppCompatActivity() {
       signOutButton.setOnClickListener {
          signOutUser()
       }
+      // Login Button
+      loginInButton.setOnClickListener {
+         val email = emailField.text.toString().trim()
+         val password = passwordField.text.toString().trim()
+
+         if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Email and Password cannot be empty", Toast.LENGTH_SHORT).show()
+            return@setOnClickListener
+         }
+         // Authenticating the user for logging back in
+         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+               if (task.isSuccessful) {
+                  val user = FirebaseAuth.getInstance().currentUser
+                  if (user != null) {
+                     userId = user.uid
+                     updateUI(user)
+                     fetchUserTasks()
+                     passwordField.requestFocus()
+                     Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show()
+                  }
+               } else {
+                  Toast.makeText(this, "Login failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                  Log.e("Auth", "Login failed", task.exception)
+               }
+            }
+      }
+
+
 
       // Check if user is already signed in
       val currentUser = FirebaseAuth.getInstance().currentUser
@@ -98,6 +139,7 @@ class MainActivity : AppCompatActivity() {
       }
    }
 
+   //The filterTasks function updates the list of tasks displayed on the UI based on the user's search query.
    private fun filterTasks(query: String) {
       tasks.clear()
       if (query.isEmpty()) {
@@ -125,7 +167,7 @@ class MainActivity : AppCompatActivity() {
          .build()
       signInLauncher.launch(signInIntent)
    }
-
+   // The function handles the result of a Firebase Authentication sign-in process
    private fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
       val response = result.idpResponse
       if (result.resultCode == RESULT_OK) {
@@ -145,14 +187,16 @@ class MainActivity : AppCompatActivity() {
          Toast.makeText(this, "Sign-in failed. Please try again.", Toast.LENGTH_SHORT).show()
       }
    }
-
+   // Updating the UI for certain visability options when user is logged in or logged out
    private fun updateUI(user: FirebaseUser) {
       userName.text = "Welcome, ${user.displayName ?: "User"}"
       signInButton.visibility = View.GONE
       signOutButton.visibility = View.VISIBLE
+      loginInButton.visibility = View.GONE
       Toast.makeText(this, "Signed in as ${user.email}", Toast.LENGTH_SHORT).show()
+      fetchUserTasks()
    }
-
+   // Signs the user out and provide a toast message when user is logged out
    private fun signOutUser() {
       AuthUI.getInstance()
          .signOut(this)
@@ -164,28 +208,8 @@ class MainActivity : AppCompatActivity() {
             userName.text = ""
          }
    }
-
-//   private fun fetchUserTasks() {
-//      if (userId == null) return
-//
-//      firestore.collection("users")
-//         .document(userId!!)
-//         .collection("tasks")
-//         .get()
-//         .addOnSuccessListener { querySnapshot ->
-//            tasks.clear()
-//            for (doc in querySnapshot) {
-//               val task = doc.toObject<Task>()
-//               tasks.add(task.taskName)
-//            }
-//            taskAdapter.notifyDataSetChanged()
-//         }
-//         .addOnFailureListener {
-//            Log.e("Firestore", "Failed to fetch tasks", it)
-//            Toast.makeText(this, "Failed to fetch tasks", Toast.LENGTH_SHORT).show()
-//         }
-//   }
-   private fun fetchUserTasks() {
+      // Grab the user task for them and give toast message if failure to do such action
+      private fun fetchUserTasks() {
       if (userId == null) return
 
       firestore.collection("users")
@@ -193,13 +217,11 @@ class MainActivity : AppCompatActivity() {
          .collection("tasks")
          .get()
          .addOnSuccessListener { querySnapshot ->
-            allTasks.clear()
             tasks.clear()
             for (doc in querySnapshot) {
                val task = doc.toObject<Task>()
-               allTasks.add(task.taskName)
+               tasks.add(task.taskName)
             }
-            tasks.addAll(allTasks)
             taskAdapter.notifyDataSetChanged()
          }
          .addOnFailureListener {
@@ -207,6 +229,7 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Failed to fetch tasks", Toast.LENGTH_SHORT).show()
          }
    }
+
 
    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
       super.onActivityResult(requestCode, resultCode, data)
@@ -221,7 +244,7 @@ class MainActivity : AppCompatActivity() {
          }
       }
    }
-
+   // This save the task to the Firestore for the user
    private fun saveTaskToFirestore(taskName: String) {
       if (userId == null) return
 
@@ -257,7 +280,7 @@ class MainActivity : AppCompatActivity() {
    // The signInButton appears on application opening
    override fun onStart() {
       super.onStart()
-      val signInButton: Button = findViewById(R.id.signInButton)
+      val signInButton: Button = findViewById(R.id.signInButton1)
       val currentUser = FirebaseAuth.getInstance().currentUser
 
       if (currentUser == null) {
@@ -271,7 +294,7 @@ class MainActivity : AppCompatActivity() {
          fetchUserTasks()
       }
    }
-
+   // Show the signout button when the user is logged in
    private fun signOutUserOnInvisibility() {
       AuthUI.getInstance()
          .signOut(this)
