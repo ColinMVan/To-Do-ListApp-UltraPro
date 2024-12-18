@@ -1,6 +1,8 @@
 This is a To-Do List app that allows the user to add and complete custom tasks. The user is required to either login or register when the app is launched. The user can add more than 20 tasks at a time, and can also filter the tasks through the search box. Below is a screenshot of the app.
 
-
+Team Member Contributions
+Colin: Designed functionality side and design for XML files. Also helped to fix bugs.
+Chryzor: Improved user experience and fixed bugs.
 
 
 
